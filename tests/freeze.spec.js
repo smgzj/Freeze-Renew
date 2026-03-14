@@ -1,4 +1,4 @@
-// tests/freeze.js
+// tests/freeze.spec.js
 // GitHub Secrets 配置：
 //   DISCORD_ACCOUNT  格式: email,password
 //   GOST_PROXY       格式: socks5://host:port（可选）
@@ -125,11 +125,9 @@ async function handleOAuthPage(page) {
 // ================================================================
 test('FreezeHost 自动续期', async () => {
     if (!DISCORD_EMAIL || !DISCORD_PASSWORD) {
-        throw new Error('❌ 缺少 DISCORD_ACCOUNT，格式: email:password');
+        throw new Error('❌ 缺少 DISCORD_ACCOUNT，格式: email,password');
     }
 
-    // GOST_PROXY 固定为本地地址，需先确认 GOST 进程是否真正启动
-    // 方式：尝试连通本地代理，失败则降级为直连
     let proxyConfig = undefined;
     if (process.env.GOST_PROXY) {
         try {
@@ -260,7 +258,6 @@ test('FreezeHost 自动续期', async () => {
         }
 
     } catch (e) {
-        // 非 skip 的异常才推送
         if (!e.message?.includes('余额不足')) {
             await sendTG(`❌ 脚本异常：${e.message}`);
         }
